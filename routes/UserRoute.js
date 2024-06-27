@@ -1,6 +1,6 @@
 const express  = require('express');
 const router = express.Router();
-const  {getUserController,updateUserController,followUserController,unFollowUserController } = require('../controllers/UserController');
+const  {getUserController,updateUserController,followUserController,unFollowUserController,blockUserController,unblockUserController } = require('../controllers/UserController');
 
 //Get User
 router.get('/:userId', getUserController);
@@ -9,10 +9,15 @@ router.get('/:userId', getUserController);
 router.put('/update/:userId',updateUserController);
 
 //Follow User
-router.put('/follow/:userId',followUserController);
+router.post('/follow/:userId',followUserController);
 
 //UnFollow User
-router.put('/unfollow/:userId',unFollowUserController);
+router.post('/unfollow/:userId',unFollowUserController);
 
+//Block User
+router.post('/block/:userId',blockUserController);
+
+//unBlock User
+router.post('/unblock/:userId',unblockUserController);
 
 module.exports = router;
