@@ -1,6 +1,7 @@
 const UserDB = require("../models/UserModel");
 const bcrypt = require("bcrypt"); 
 const jwt = require('jsonwebtoken');
+const {CustomError} = require('../middlewares/errorMiddleware');
 
 
 const registerController = async (req,res,next)=>{
@@ -19,12 +20,12 @@ const registerController = async (req,res,next)=>{
        
     }
     catch(error){
-        next(error)
+        next(error);
     }
 }
 
 
-const loginController = async (req,res)=>{
+const loginController = async (req,res,next)=>{
     try{
   let user;
   if(req.body.email){
@@ -35,13 +36,13 @@ const loginController = async (req,res)=>{
   }
 
   if(!user){
-    return res.status(404).json("User is not found");
+  throw new CustomError("user not found!",404);
   }
 
   const matchPass = await bcrypt.compare(req.body.password , user.password);
 
   if(!matchPass){
-    return res.status(401).json("Email or Password is not correct");
+    throw new CustomError("Email or Password is not correct",404);
   }
 
 const {password,...data}= user._doc;
@@ -49,26 +50,25 @@ const token = jwt.sign({_id:user._id},process.env.JWT_SECRET_KEY,{expiresIn: pro
 res.cookie("token",token).status(200).json(data);
     }
     catch(error){
-  res.status(500).json(error);
+  next(error);
     }
 }
 
 
-const logoutController =  async(req,res)=>{
+const logoutController =  async(req,res,next)=>{
     try{
     res.clearCookie("token",{sameSite:"none",secure:true}).status(200).json("user logged out successfully");
     }
     catch(error){
-     res.status(500).json(error);
+      next(error);
 }};
 
 
-const refetchController = async(req,res)=>{
+const refetchController = async(req,res,next)=>{
     const token = req.cookies.token
     jwt.verify(token,process.env.JWT_SECRET_KEY,{},async(err, data)=>{
-      console.log(data);
     if(err){
-      res.status(404).json(err);
+      throw new CustomError(err,404);
     }
     try{
     const id = data._id;
@@ -76,7 +76,7 @@ const refetchController = async(req,res)=>{
     res.status(200).json(user);
     }
     catch(error){
-      res.status(500).json(error);
+      next(error);
     }
 })
 };    
