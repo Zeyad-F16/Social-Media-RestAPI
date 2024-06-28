@@ -7,7 +7,8 @@ const  {getUserController,
       blockUserController,
     unblockUserController,
       blockListController,
-     deleteUserController} = require('../controllers/UserController');
+     deleteUserController,
+     searchUserController} = require('../controllers/UserController');
 
 //Get User
 router.get('/:userId', getUserController);
@@ -32,5 +33,8 @@ router.get('/blocklist/:userId',blockListController);
 
 //Delete User
 router.delete('/deleteuser/:userId',deleteUserController);
+
+//search User
+router.get('/search/:query',searchUserController);
 
 module.exports = router;

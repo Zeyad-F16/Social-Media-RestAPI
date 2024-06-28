@@ -148,6 +148,7 @@ res.status(200).json({message:"Successfully Blocked User"});
   }
 }
 
+
 // unBlock User
 const unblockUserController = async(req , res , next)=>{
   const {userId} = req.params;
@@ -179,6 +180,8 @@ res.status(200).json({message:"Successfully unBlocked User"});
   next(error);
   }
 }
+
+
 // Blocklist
 const blockListController = async(req , res , next)=>{
   const {userId}= req.params;
@@ -235,6 +238,23 @@ const deleteUserController = async (req,res,next)=>{
   }
 }
 
+// search
+const searchUserController = async(req,res,next)=>{
+  const {query}=req.params;
+  try{
+  const user = await userDB.find({
+    $or:[
+      {username:{$regex:new RegExp(query,'i')}},
+      {fullName:{$regex:new RegExp(query,'i')}}
+    ]
+  });
+
+  res.status(200).json({user});
+  }
+  catch{
+    next(error);
+  }
+}
 
 module.exports = {getUserController ,
                 updateUserController,
@@ -243,4 +263,5 @@ module.exports = {getUserController ,
                  blockUserController,
                unblockUserController,
                  blockListController,
-                deleteUserController};
+                deleteUserController,
+                searchUserController};
