@@ -1,6 +1,13 @@
 const express  = require('express');
 const router = express.Router();
-const  {getUserController,updateUserController,followUserController,unFollowUserController,blockUserController,unblockUserController } = require('../controllers/UserController');
+const  {getUserController,
+     updateUserController,
+     followUserController,
+   unFollowUserController,
+      blockUserController,
+    unblockUserController,
+      blockListController,
+     deleteUserController} = require('../controllers/UserController');
 
 //Get User
 router.get('/:userId', getUserController);
@@ -19,5 +26,11 @@ router.post('/block/:userId',blockUserController);
 
 //unBlock User
 router.post('/unblock/:userId',unblockUserController);
+
+//Blocklist User
+router.get('/blocklist/:userId',blockListController);
+
+//Delete User
+router.delete('/deleteuser/:userId',deleteUserController);
 
 module.exports = router;

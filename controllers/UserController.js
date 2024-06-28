@@ -1,5 +1,8 @@
 const userDB = require('../models/UserModel');
 const {CustomError} = require('../middlewares/errorMiddleware');
+const postDB = require('../models/PostModel');
+const commentDB = require('../models/CommentModel');
+const storyDB = require('../models/StoryModel');
 
 // Get User By Id 
 const getUserController = async(req , res, next)=>{
@@ -176,5 +179,68 @@ res.status(200).json({message:"Successfully unBlocked User"});
   next(error);
   }
 }
+// Blocklist
+const blockListController = async(req , res , next)=>{
+  const {userId}= req.params;
+  try{
+  const user =  await userDB.findById(userId).populate("blockList","username fullName profilePicture");
+  if(!user){
+    throw new CustomError("User not Found!",404);
+  }
 
-module.exports = {getUserController ,updateUserController, followUserController,unFollowUserController ,blockUserController ,unblockUserController};
+  const {blockList,...data}=user;
+
+  res.status(200).json(blockList);
+  
+}
+  catch(error) {
+    next(error);
+  }
+}
+
+
+// Delete user
+const deleteUserController = async (req,res,next)=>{
+  const {userId}= req.params;
+  try{
+    const userToDelete = await userDB.findById(userId);
+    if(!userToDelete){
+      throw new CustomError("User not Found!",404);
+    }
+    await postDB.deleteMany({user:userId});
+    await postDB.deleteMany({"comments.user":userId});
+    await postDB.deleteMany({"comments.replies.user":userId});
+    await commentDB.deleteMany({user:userId});
+    await storyDB.deleteMany({user:userId});
+    await postDB.deleteMany({likes:userId},{$pull:{likes:userId}});
+    await userDB.updateMany(
+        {_id:{$in:userToDelete.following}},
+        {$pull:{followers:userId}});
+    await commentDB.updateMany({},{$pull:{likes:userId}});
+    await commentDB.updateMany({"replies.likes":userId},{$pull:{"replies.likes":userId}});    
+    await postDB.updateMany({},{$pull:{likes:userId}});
+   
+    const replyComment = await commentDB.find({"replies.user":userId});
+
+    await Promise.all(
+      replyComment.map(async(comment)=>{
+        comment.replies=comment.replies.filter((reply)=>reply.user.toString()!=userId)
+      })
+    )
+    await userToDelete.deleteOne();
+    res.status(200).json({message:"User deleted successfully"});
+  }
+  catch(error){
+  next(error)
+  }
+}
+
+
+module.exports = {getUserController ,
+                updateUserController,
+                followUserController,
+              unFollowUserController,
+                 blockUserController,
+               unblockUserController,
+                 blockListController,
+                deleteUserController};
