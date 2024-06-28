@@ -256,6 +256,27 @@ const searchUserController = async(req,res,next)=>{
   }
 }
 
+const generateFileUrl =(filename)=>{
+  return process.env.URL+`/uploads/${filename}`
+}
+
+//upload profile Image
+const uploadImageController= async(req,res,next)=>{
+  const {userId}=req.params;
+  const {filename}=req.file;
+  try{
+  const user = await userDB.findByIdAndUpdate(userId,{profilePicture:generateFileUrl(filename)},{new:true});
+  if(!user){
+    throw new CustomError("User not Found!",404);
+  }
+res.status(200).json({message:"Profile Picture Updated Successfully",user});
+}
+  catch(error){
+  next(error);
+    }
+}
+
+
 module.exports = {getUserController ,
                 updateUserController,
                 followUserController,
@@ -264,4 +285,5 @@ module.exports = {getUserController ,
                unblockUserController,
                  blockListController,
                 deleteUserController,
-                searchUserController};
+                searchUserController,
+                uploadImageController};
