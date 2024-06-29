@@ -275,6 +275,21 @@ res.status(200).json({message:"Profile Picture Updated Successfully",user});
   next(error);
     }
 }
+//upload cover Image
+const uploadCoverImageController= async(req,res,next)=>{
+  const {userId}=req.params;
+  const {filename}=req.file;
+  try{
+  const user = await userDB.findByIdAndUpdate(userId,{coverPicture:generateFileUrl(filename)},{new:true});
+  if(!user){
+    throw new CustomError("User not Found!",404);
+  }
+res.status(200).json({message:"Cover Picture Updated Successfully",user});
+}
+  catch(error){
+  next(error);
+    }
+}
 
 
 module.exports = {getUserController ,
@@ -286,4 +301,5 @@ module.exports = {getUserController ,
                  blockListController,
                 deleteUserController,
                 searchUserController,
-                uploadImageController};
+               uploadImageController,
+           uploadCoverImageController };

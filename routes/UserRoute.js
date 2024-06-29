@@ -9,7 +9,8 @@ const  {getUserController,
       blockListController,
      deleteUserController,
      searchUserController,
-     uploadImageController} = require('../controllers/UserController');
+    uploadImageController,
+uploadCoverImageController} = require('../controllers/UserController');
 
 
  const uploadImage= require('../middlewares/uploadImageMiddleware');    
@@ -44,5 +45,8 @@ router.get('/search/:query',searchUserController);
 
 //Upload profile picture
 router.put('/upload-profile-picture/:userId', uploadImage.single("profilePicture"), uploadImageController);
+
+//Upload profile picture
+router.put('/upload-cover-picture/:userId', uploadImage.single("coverPicture"), uploadCoverImageController);
 
 module.exports = router;
