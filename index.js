@@ -7,6 +7,7 @@ const cookieParser=require('cookie-parser');
 const path= require('path');
 const {errorHandler} = require('./middlewares/errorMiddleware');
 const UserRoute = require('./routes/UserRoute');
+const PostRoute = require('./routes/PostRoute');
 
 dotenv.config();
 app.use(express.json());
@@ -16,6 +17,7 @@ app.use("/uploads",express.static(path.join(__dirname,"uploads")));
 //Mount Routes
 app.use("/api/auth",authRoute);
 app.use("/api/user",UserRoute);
+app.use("/api/post",PostRoute);
 
 // Global Error Handler
 app.use(errorHandler);
