@@ -149,3 +149,29 @@ exports.deletePostController=async (req,res,next)=>{
         next(error);
     }
 }
+
+
+exports.likePostController = async(req,res,next)=>{
+const {postId}=req.params;
+const {userId}=req.body;
+try{
+    const post=await PostDB.findById(postId);
+    if(!post){
+        throw new CustomError("Post not found!",404);
+    }
+    const user=await UserDB.findById(userId);
+    if(!user){
+        throw new CustomError("User not found!",404);
+    }
+    if(post.likes.includes(userId)){
+        throw new CustomError("You are already liked this post",404);
+    }
+
+   post.likes.push(userId);
+   await post.save();
+   res.status(200).json({message: "Post liked Successfully"});
+}
+catch(error){
+    next(error);
+  }
+}
