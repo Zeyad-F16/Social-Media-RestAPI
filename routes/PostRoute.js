@@ -6,7 +6,8 @@ const {createPostController ,
   getUserPostsController,
   getallPostsController,
   deletePostController,
-  likePostController}= require('../controllers/PostController');
+  likePostController,
+  disLikePostController}= require('../controllers/PostController');
 const uploadImage= require('../middlewares/uploadImageMiddleware');    
 
 // Create post
@@ -29,5 +30,8 @@ router.delete("/delete/:postId", deletePostController);
 
 // like post
 router.post("/like/:postId", likePostController);
+
+// dislike post
+router.post("/dislike/:postId", disLikePostController);
 
 module.exports = router;
