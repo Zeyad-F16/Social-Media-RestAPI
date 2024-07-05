@@ -8,6 +8,7 @@ const path= require('path');
 const {errorHandler} = require('./middlewares/errorMiddleware');
 const UserRoute = require('./routes/UserRoute');
 const PostRoute = require('./routes/PostRoute');
+const CommentRoute = require('./routes/CommentRoute');
 
 dotenv.config();
 app.use(express.json());
@@ -18,6 +19,7 @@ app.use("/uploads",express.static(path.join(__dirname,"uploads")));
 app.use("/api/auth",authRoute);
 app.use("/api/user",UserRoute);
 app.use("/api/post",PostRoute);
+app.use("/api/comment",CommentRoute);
 
 // Global Error Handler
 app.use(errorHandler);
