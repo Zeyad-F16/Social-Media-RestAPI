@@ -241,3 +241,61 @@ exports.dislikeCommentController=async(req,res,next)=>{
         next(error);
     }
 }
+
+
+exports.likeReplyCommentController=async(req,res,next)=>{
+
+    const {commentId,replyId}=req.params;
+    const {userId}=req.body;
+    try{
+        const comment=await CommentDB.findById(commentId);
+        if(!comment){
+            throw new CustomError("Comment not found!",404);
+        }
+
+        const replyComment=comment.replies.id(replyId);
+        if(!replyComment){
+            throw new CustomError("Reply comment not found!",404);
+        }
+
+        if(replyComment.likes.includes(userId)){
+            throw new CustomError("You already liked the reply comment!",400);
+        }
+        replyComment.likes.push(userId);
+        await comment.save();
+        res.status(200).json({message:"Reply comment liked successfully!",comment});
+
+    }
+    catch(error){
+        next(error);
+    }
+}
+
+
+exports.dislikeReplyCommentController=async(req,res,next)=>{
+
+    const {commentId,replyId}=req.params;
+    const {userId}=req.body;
+    try{
+        const comment=await CommentDB.findById(commentId);
+        if(!comment){
+            throw new CustomError("Comment not found!",404);
+        }
+
+        const replyComment=comment.replies.id(replyId);
+        if(!replyComment){
+            throw new CustomError("Reply comment not found!",404);
+        }
+
+        if(!replyComment.likes.includes(userId)){
+            throw new CustomError("You have not liked the reply comment!",400);
+        }
+        replyComment.likes= replyComment.likes.filter(id=>id.toString()!==userId);
+        await comment.save();
+        res.status(200).json({message:"Reply comment disliked successfully!",comment});
+
+    }
+    catch(error){
+        next(error);
+    }
+}

@@ -9,7 +9,9 @@ const { createCommentController ,
      deleteCommentController,
      deleteReplyCommentController,
      likeCommentController,
-     dislikeCommentController }=require('../controllers/CommentController');
+     dislikeCommentController,
+     likeReplyCommentController,
+     dislikeReplyCommentController }=require('../controllers/CommentController');
 
 router.post('/create',createCommentController);
 router.post('/create/reply/:commentId',createCommentReplyController);
@@ -18,7 +20,9 @@ router.put('/update/:commentId/reply/:replyId',updateReplyCommentController);
 router.get('/post/:postId',getPostCommentsController);
 router.delete('/delete/:commentId',deleteCommentController);
 router.delete('/delete/:commentId/reply/:replyId',deleteReplyCommentController);
-router.put('/like/:commentId',likeCommentController);
-router.put('/dislike/:commentId',dislikeCommentController);
+router.post('/like/:commentId',likeCommentController);
+router.post('/dislike/:commentId',dislikeCommentController);
+router.post('/like/:commentId/reply/:replyId',likeReplyCommentController);
+router.post('/dislike/:commentId/reply/:replyId',dislikeReplyCommentController);
 
 module.exports= router;
