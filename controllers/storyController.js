@@ -56,3 +56,23 @@ exports.getStoriesController=async(req,res,next)=>{
         next(error);
     }
 }
+
+
+exports.getUserStoriesController=async(req,res,next)=>{
+    const userId=req.params.userId;
+    try{
+        const user=await UserDB.findById(userId);
+        
+        if(!user){
+            throw new CustomError("No user found",404)
+        }
+
+        const stories=await StoryDB.find({user:userId}).populate("user","fullName username profilePicture");
+        res.status(200).json(stories);
+
+    }
+    catch(error){
+        next(error);
+    }
+
+}
