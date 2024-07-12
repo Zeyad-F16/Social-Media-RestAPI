@@ -76,3 +76,31 @@ exports.getUserStoriesController=async(req,res,next)=>{
     }
 
 }
+
+exports.deleteStoryController=async(req,res)=>{
+    const storyId=req.params.storyId;
+    try{
+     await StoryDB.findByIdAndDelete(storyId);
+     res.status(200).json({message:"Story has been deleted!"});
+    }
+    catch(error){
+     next(error);
+    }
+ }
+ 
+ 
+ exports.deleteStoriesController=async(req,res,next)=>{
+     const userId=req.params.userId;
+     try{
+         const user=await UserDB.findById(userId);
+         
+         if(!user){
+             throw new CustomError("No user found",404);
+         }
+      await StoryDB.deleteMany({user:userId});
+      res.status(200).json({message:"Stories has been deleted!"});
+     }
+     catch(error){
+      next(error);
+     }
+ }
