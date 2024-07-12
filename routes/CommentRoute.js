@@ -5,12 +5,14 @@ const { createCommentController ,
     createCommentReplyController ,
           updateCommentController,
      updateReplyCommentController,
-     getPostCommentsController }=require('../controllers/CommentController');
+     getPostCommentsController,
+     deleteCommentController }=require('../controllers/CommentController');
 
 router.post('/create',createCommentController);
 router.post('/create/reply/:commentId',createCommentReplyController);
 router.put('/updateComment/:commentId',updateCommentController);
 router.put('/update/:commentId/reply/:replyId',updateReplyCommentController);
 router.get('/post/:postId',getPostCommentsController);
+router.delete('/delete/:commentId',deleteCommentController);
 
 module.exports= router;

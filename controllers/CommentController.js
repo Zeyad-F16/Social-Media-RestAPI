@@ -144,3 +144,28 @@ exports.getPostCommentsController=async(req,res,next)=>{
         next(error);
     }
 }
+
+exports.deleteCommentController = async(req, res, next)=>{
+    const {commentId} = req.params;
+
+    try{
+    const comment = await CommentDB.findById(commentId);
+    if(!comment){
+        throw new CustomError("Comment not found",404);
+    }
+
+    await PostDB.findOneAndUpdate(
+        {comments: commentId},
+        {$pull :{comments: commentId}},
+        {new:true}
+    )
+
+
+    await comment.deleteOne();
+    res.status(200).json({message:"Comment has been deleted"});
+
+    }
+    catch(error) {
+    next(error);
+    }
+}
