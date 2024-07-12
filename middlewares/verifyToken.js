@@ -1,0 +1,19 @@
+const jwt = require('jsonwebtoken');
+
+const {CustomError}=require("./errorMiddleware");
+
+const verifyToken=(req,res,next)=>{
+    const token=req.cookies.token;
+    if(!token){
+        throw new CustomError("You are not authenticated!",401);
+    }
+    jwt.verify(token , process.env.JWT_SECRET_KEY,async(err,data)=>{
+        if(err){
+            throw new CustomError("Token is not valid!",403);
+        }
+        req.userId=data._id;
+        next();
+    })
+}
+
+module.exports=verifyToken;
