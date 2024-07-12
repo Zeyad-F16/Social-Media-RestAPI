@@ -169,3 +169,24 @@ exports.deleteCommentController = async(req, res, next)=>{
     next(error);
     }
 }
+
+
+exports.deleteReplyCommentController=async(req,res,next)=>{
+
+    const {commentId,replyId}=req.params;
+    try{
+        const comment=await CommentDB.findById(commentId);
+        if(!comment){
+            throw new CustomError("Comment not found!",404);
+        }
+
+        comment.replies=comment.replies.filter(id=>{ id.toString()!==replyId});
+
+        await comment.save();
+        res.status(200).json({message:"Reply comment deleted successfully!"});
+
+    }
+    catch(error){
+        next(error);
+    }
+}
