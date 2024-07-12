@@ -9,6 +9,7 @@ const {errorHandler} = require('./middlewares/errorMiddleware');
 const UserRoute = require('./routes/UserRoute');
 const PostRoute = require('./routes/PostRoute');
 const CommentRoute = require('./routes/CommentRoute');
+const StoryRoute = require('./routes/storyRoute');
 
 dotenv.config();
 app.use(express.json());
@@ -20,6 +21,7 @@ app.use("/api/auth",authRoute);
 app.use("/api/user",UserRoute);
 app.use("/api/post",PostRoute);
 app.use("/api/comment",CommentRoute);
+app.use("/api/story",StoryRoute);
 
 // Global Error Handler
 app.use(errorHandler);
