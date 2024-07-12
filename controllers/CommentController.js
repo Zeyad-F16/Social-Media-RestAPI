@@ -190,3 +190,54 @@ exports.deleteReplyCommentController=async(req,res,next)=>{
         next(error);
     }
 }
+
+exports.likeCommentController=async(req,res,next)=>{
+
+    const {commentId}=req.params;
+    const {userId}=req.body;
+    try{
+        const comment=await CommentDB.findById(commentId);
+        if(!comment){
+            throw new CustomError("Comment not found!",404);
+        }
+
+        if(comment.likes.includes(userId)){
+            throw new CustomError("You have already liked this comment",400);
+        }
+
+        comment.likes.push(userId);
+        await comment.save();
+
+        res.status(200).json({message:"Comment liked successfully!",comment});
+
+    }
+    catch(error){
+        next(error);
+    }
+}
+
+
+exports.dislikeCommentController=async(req,res,next)=>{
+
+    const {commentId}=req.params;
+    const {userId}=req.body;
+    try{
+        const comment=await CommentDB.findById(commentId);
+        if(!comment){
+            throw new CustomError("Comment not found!",404);
+        }
+
+        if(!comment.likes.includes(userId)){
+            throw new CustomError("You have have not liked this comment",400);
+        }
+
+        comment.likes=comment.likes.filter(id=>id.toString()!==userId);
+        await comment.save();
+
+        res.status(200).json({message:"Comment disliked successfully!",comment});
+
+    }
+    catch(error){
+        next(error);
+    }
+}
