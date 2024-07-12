@@ -113,3 +113,34 @@ exports.updateReplyCommentController=async(req,res,next)=>{
         next(error);
     }
 }
+
+
+const populateUserDetails=async(comments)=>{
+    for(const comment of comments){
+        await comment.populate("user","username fullName profilePicture");
+        if(comment.replies.length>0){
+            await comment.populate("replies.user","username fullName profilePicture");
+        }
+    }
+}
+
+exports.getPostCommentsController=async(req,res,next)=>{
+
+    const {postId}=req.params;
+    try{
+        const post=await PostDB.findById(postId);
+        if(!post){
+            throw new CustomError("Post not found!",404);
+        }
+
+        let comments=await CommentDB.find({post:postId});
+
+        await populateUserDetails(comments);
+
+        res.status(200).json({comments});
+
+    }
+    catch(error){
+        next(error);
+    }
+}
